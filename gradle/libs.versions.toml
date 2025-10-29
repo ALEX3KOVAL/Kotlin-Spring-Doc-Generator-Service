@@ -1,0 +1,47 @@
+[versions]
+reflect = "1.9.0"
+apache-poi = "5.2.3"
+apache-commons-io = "2.14.0"
+apache-xmlbeans = "5.1.1"
+apache-pdfbox = "3.0.3"
+koin = "4.0.0"
+koin-annotations = "2.0.0"
+kotlin-coroutines = "1.10.1"
+itext = "5.5.13.3"
+ktor = "2.3.12"
+
+[libraries]
+kotlin-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlin-coroutines" }
+kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect", version.ref = "reflect" }
+
+ktor-http = { module = "io.ktor:ktor-http", version.ref = "ktor" }
+ktor-client-content-negotiation = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktor" }
+ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
+ktor-client-cio = { module = "io.ktor:ktor-client-cio", version.ref = "ktor" }
+ktor-client-cio-jvm = { module = "io.ktor:ktor-client-cio-jvm", version.ref = "ktor" }
+
+apache-poi = { module = "org.apache.poi:poi", version.ref = "apache-poi" }
+apache-xmlbeans = { module = "org.apache.xmlbeans:xmlbeans", version.ref = "apache-xmlbeans" }
+apache-commons-io = { module = "commons-io:commons-io", version.ref = "apache-commons-io" }
+apache-poi-ooxml = { module = "org.apache.poi:poi-ooxml", version.ref = "apache-poi" }
+apache-poi-ooxml-lite = { module = "org.apache.poi:poi-ooxml-lite", version.ref = "apache-poi" }
+apache-pdfbox = { module = "org.apache.pdfbox:pdfbox", version.ref = "apache-pdfbox" }
+
+itext = { module = "com.itextpdf:itextpdf", version.ref = "itext" }
+
+koin-ktor = { module = "io.insert-koin:koin-ktor", version.ref = "koin" }
+koin-logger = { module = "io.insert-koin:koin-logger-slf4j", version.ref = "koin" }
+koin-core = { module = "io.insert-koin:koin-core", version.ref = "koin" }
+koin-annotations = { module = "io.insert-koin:koin-annotations", version.ref = "koin-annotations" }
+
+
+[plugins]
+[bundles]
+apache = [
+    "apache-poi",
+    "apache-pdfbox",
+    "apache-commons-io",
+    "apache-poi-ooxml",
+    "apache-poi-ooxml-lite",
+    "apache-xmlbeans"
+]

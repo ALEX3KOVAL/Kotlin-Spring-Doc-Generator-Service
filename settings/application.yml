@@ -1,0 +1,25 @@
+app:
+  web-client:
+    fileService: {
+      protocol: ${ APP_FILE_SERVICE_HTTP_PROTOCOL },
+      host: ${ APP_FILE_SERVICE_HOST },
+      port: ${ APP_FILE_SERVICE_PORT }
+    }
+
+spring:
+  datasource:
+    hikari:
+      connection-timeout: 30000
+      maximum-pool-size: 20
+      minimum-idle: 5
+      idle-timeout: 600000
+      max-lifetime: 1800000
+      jdbc-url: $POSTGRES_JDBC_URL
+      password: POSTGRES_PASSWORD
+      username: POSTGRES_USERNAME
+      driver-class-name: org.postgresql.Driver
+    url: $POSTGRES_JDBC_URL
+  data:
+    r2dbc:
+      repositories:
+        enabled: true
