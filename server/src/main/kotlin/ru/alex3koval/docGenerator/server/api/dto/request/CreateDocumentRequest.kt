@@ -1,5 +1,8 @@
 package ru.alex3koval.docGenerator.server.api.dto.request
 
-data class CreateDocumentRequest(
-    val kavo: String
+import ru.alex3koval.docGenerator.domain.vo.DocumentFormat
+
+data class CreateDocumentRequest<TEMPLATE_ID: Any>(
+    val templateId: TEMPLATE_ID,
+    val format: DocumentFormat
 )
