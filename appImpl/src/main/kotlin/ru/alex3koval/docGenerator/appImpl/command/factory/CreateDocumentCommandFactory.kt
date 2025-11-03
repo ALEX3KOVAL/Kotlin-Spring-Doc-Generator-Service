@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import ru.alex3koval.docGenerator.appImpl.command.CreateDocumentCommandImpl
 import ru.alex3koval.docGenerator.domain.command.CreateDocumentCommand
 import ru.alex3koval.docGenerator.domain.command.factory.CommandFactory
-import ru.alex3koval.docGenerator.domain.contract.DocumentGenerator
+import ru.alex3koval.docGenerator.domain.service.generator.DocumentGenerator
 import ru.alex3koval.docGenerator.domain.service.DocumentService
 import ru.alex3koval.docGenerator.domain.service.FileServiceFacade
 
@@ -17,6 +17,7 @@ class CreateDocumentCommandFactory<ID, FILE_ID, TEMPLATE_ID : Any>(
     override fun create(
         dto: CreateDocumentCommand.DTO<TEMPLATE_ID>
     ): CreateDocumentCommand<ID> = CreateDocumentCommandImpl(
+        filename = dto.filename,
         templateId = dto.templateId,
         format = dto.format,
         rawModel = dto.rawModel,
