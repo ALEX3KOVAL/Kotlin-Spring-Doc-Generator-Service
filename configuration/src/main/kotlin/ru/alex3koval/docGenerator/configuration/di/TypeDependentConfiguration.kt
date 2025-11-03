@@ -61,10 +61,10 @@ class TypeDependentConfiguration(
 
     @Bean
     fun createDocumentCommandFactory(
-        documentService: DocumentService<ULong, ULong, ULong>,
+        documentService: DocumentService<ULong, ULong, Any>,
         documentGenerator: DocumentGenerator,
         fileServiceFacade: FileServiceFacade<ULong>
-    ): CreateDocumentCommandFactory<ULong, ULong, ULong> = CreateDocumentCommandFactory(
+    ): CreateDocumentCommandFactory<ULong, ULong> = CreateDocumentCommandFactory(
         documentService = documentService,
         documentGenerator = documentGenerator,
         fileServiceFacade = fileServiceFacade,
