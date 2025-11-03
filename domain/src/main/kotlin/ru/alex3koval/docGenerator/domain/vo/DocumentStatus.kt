@@ -13,5 +13,11 @@ enum class DocumentStatus(val value: UShort) {
                 .firstOrNull { entry -> entry.value == preprocessed }
                 ?: throw RuntimeException("Не найдено значение статуса: $preprocessed")
         }
+
+        operator fun invoke(value: UShort): Result<DocumentStatus> = runCatching {
+            entries
+                .firstOrNull { entry -> entry.value == value }
+                ?: throw RuntimeException("Не найдено значение статуса: $value")
+        }
     }
 }
