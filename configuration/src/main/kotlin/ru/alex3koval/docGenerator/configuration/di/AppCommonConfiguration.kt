@@ -5,12 +5,14 @@ import org.springframework.context.annotation.Import
 import ru.alex3koval.docGenerator.configuration.di.appImplModule.AppImplModuleConfiguration
 import ru.alex3koval.docGenerator.configuration.di.domainModule.DomainModuleConfiguration
 import ru.alex3koval.docGenerator.storage.StorageModuleConfiguration
+import ru.alex3koval.eventingImpl.EventingConfiguration
 
 @Configuration
 @Import(
     DomainModuleConfiguration::class,
-    TypeDependentConfiguration::class,
     AppImplModuleConfiguration::class,
-    StorageModuleConfiguration::class
+    StorageModuleConfiguration::class,
+    EventingConfiguration::class,
+    TypeDependentConfiguration::class
 )
-open class AppCommonConfiguration
+class AppCommonConfiguration
