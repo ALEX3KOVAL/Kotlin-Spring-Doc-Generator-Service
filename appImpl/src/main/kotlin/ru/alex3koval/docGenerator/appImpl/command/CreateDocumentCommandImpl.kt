@@ -2,15 +2,17 @@ package ru.alex3koval.docGenerator.appImpl.command
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import reactor.core.publisher.Mono
+import reactor.core.scheduler.Schedulers
 import ru.alex3koval.docGenerator.domain.command.CreateDocumentCommand
 import ru.alex3koval.docGenerator.domain.contract.BaseGeneratedDocDTO
-import ru.alex3koval.docGenerator.domain.contract.DocumentGenerator
 import ru.alex3koval.docGenerator.domain.service.DocumentService
 import ru.alex3koval.docGenerator.domain.service.FileServiceFacade
 import ru.alex3koval.docGenerator.domain.service.dto.UploadFileRequestDTO
+import ru.alex3koval.docGenerator.domain.service.generator.DocumentGenerator
 import ru.alex3koval.docGenerator.domain.vo.DocumentFormat
 
 class CreateDocumentCommandImpl<DOC_ID, FILE_ID, TEMPLATE_ID : Any>(
+    private val filename: String,
     private val templateId: TEMPLATE_ID,
     private val format: DocumentFormat,
     private val rawModel: Map<String, Any>,
@@ -21,26 +23,35 @@ class CreateDocumentCommandImpl<DOC_ID, FILE_ID, TEMPLATE_ID : Any>(
 ) : CreateDocumentCommand<DOC_ID> {
     override fun execute(): Mono<DOC_ID> = documentService
         .getTemplate(templateId)
-        .flatMap { entity ->
+        .zipWhen { entity -> fileServiceFacade.getFile(id = entity.fileId) }
+        .flatMap { tuple ->
             Mono
-                .just(rawModel.mapToDomainDto(entity.clazz))
-                .withContextWrite(entity.clazz)
+                .just(rawModel.mapToDomainDto(tuple.t1.clazz))
+                .zipWhen { Mono.just(tuple.t2) }
+                .withTemplateClazzContextWrite(tuple.t1.clazz)
         }
-        .zipWhen { domainDto -> documentGenerator.generate(domainDto) }
+        .publishOn(Schedulers.parallel())
+        .flatMap { tuple ->
+            documentGenerator
+                .generate(
+                    dto = tuple.t1,
+                    template = tuple.t2,
+                    format = format
+                )
+                .zipWhen { Mono.just(tuple.t1) }
+        }
         .flatMap { tuple ->
             fileServiceFacade
                 .uploadFile(
-                    dto = with(tuple.t2) {
+                    dto = with(tuple.t1) {
                         UploadFileRequestDTO(
-                            filename = name,
-                            hash = hash,
-                            size = size,
+                            filename = filename,
                             format = format,
-                            stream = stream
+                            stream = tuple.t1
                         )
                     }
                 )
-                .zipWhen { fileId -> Mono.just(tuple.t1) }
+                .zipWhen { fileId -> Mono.just(tuple.t2) }
         }
         .flatMap { tuple ->
             Mono.deferContextual { ctxView ->
@@ -54,12 +65,12 @@ class CreateDocumentCommandImpl<DOC_ID, FILE_ID, TEMPLATE_ID : Any>(
             }
         }
 
-    private fun <T> Mono<T>.withContextWrite(clazz: String): Mono<T> = this
-        .contextWrite { ctx -> ctx.put("clazz", clazz) }
-
     private fun Map<String, Any>.mapToDomainDto(clazz: String): BaseGeneratedDocDTO = objectMapper
         .convertValue(
             this,
             Class.forName(clazz) as Class<BaseGeneratedDocDTO>
         )
+
+    private fun <T> Mono<T>.withTemplateClazzContextWrite(clazz: String): Mono<T> = this
+        .contextWrite { ctx -> ctx.put("clazz", clazz) }
 }
